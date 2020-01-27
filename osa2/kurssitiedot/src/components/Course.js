@@ -3,13 +3,12 @@ import React from 'react'
 const Header = (props) => {
     return (
         <div>
-            <h1>{props.course}</h1>
+            <h2>{props.course}</h2>
         </div>
     )
 }
 
 const Content = (props) => {
-    console.log(props.course);
     return (
         <div>
             {props.course.map((course, i) => 
@@ -27,24 +26,23 @@ const Part = (props) => {
 }
 
 const Total = (props) => {
-    let total = 0;
-    for(let i = 0; i < props.course.length; i++){
-        total += props.course[i].exercises
-    }
+    let total = props.course.reduce(function(sum, course){
+        return sum + course.exercises
+    }, 0)
+
     return (
         <div>
-            <p>Number of exercises {total}</p>
+            <b>Total of {total} exercises</b>
         </div>
     )
 }
-
 
 const Course = ({ course }) => {
     return (
         <div>
             <Header course={course.name} />
             <Content course={course.parts} />
-            <Total course={course.parts} />
+            <Total course ={course.parts}/>
         </div>
     )
 }
