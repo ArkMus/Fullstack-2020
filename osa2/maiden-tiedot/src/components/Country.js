@@ -1,6 +1,8 @@
 import React from "react"
+import Weather from "./Weather"
 
-const CountryList = ({ countries, search, handleShowMore }) => {
+const CountryList = ({ countries, search, handleShowmore }) => {
+
     let newCountries = []
 
     if (search !== '') {
@@ -34,7 +36,7 @@ const CountryList = ({ countries, search, handleShowMore }) => {
         return (
             <div>
                 {newCountries.map((newCountries, i) =>
-                    <SimpleCountry key={i} name={newCountries.name} handleShowMore={handleShowMore} />)}
+                    <SimpleCountry key={i} name={newCountries.name} handleShowmore={() => handleShowmore(newCountries.name)} />)}
             </div>
         )
     }
@@ -64,7 +66,7 @@ const Languages = (languages) => {
 const SimpleCountry = (props) => {
     return (
         <div>
-            {props.name} <button onClick={props.handleShowMore}>show</button>
+            {props.name} <button onClick={props.handleShowmore}>show</button>
         </div>
     )
 }
@@ -77,11 +79,15 @@ const Country = (props) => {
             <div>capital {props.capital}</div>
             <div>population {props.population}</div>
 
-            <h3>languages</h3>
+            <h3>Spoken languages</h3>
             <Languages languages={props.languages} />
             <img src={props.flag} alt="Flag" width="100" height="100" />
+
+            <h3>Weather in {props.capital}</h3>
+            <Weather capital={props.capital} />
         </div>
     )
 }
+
 
 export default CountryList

@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from 'react'
-import axios from 'axios'
 import CountryList from './components/Country'
 import Filter from './components/Filter'
+import dataService from './services/dataService'
 
 const App = () => {
     const [countries, setCountries] = useState([])
+    const [search, setSearch] = useState('')
 
     useEffect(() => {
         console.log('effect')
-        axios
-            .get('https://restcountries.eu/rest/v2/all')
+        dataService
+            .getCountries()
             .then(response => {
                 console.log('promise fulfilled')
                 setCountries(response.data)
@@ -21,11 +22,10 @@ const App = () => {
         setSearch(event.target.value)
     }
 
-    const handleShowmore = () => {
-        console.log("Click!");
+    const handleShowmore = (name) => {
+        setSearch(name)
     }
 
-    const [search, setSearch] = useState('')
     return (
         <div>
             <Filter search={search} handleSearchChange={handleSearchChange} />
