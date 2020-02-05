@@ -43,12 +43,21 @@ const App = () => {
                 .then(response => {
                     setPersons(persons.concat(response.data))
                 })
+                .catch(error => {
+                    console.log(error.response.data);
 
-            setClassName("normalMessage")
-            setMessage(`Added ${newName}`)
-            setTimeout(() => {
-                setMessage(null)
-            }, 5000)
+                    setClassName("error")
+                    setMessage(error.response.data.error)
+                    setTimeout(() => {
+                        setMessage(null)
+                    }, 5000)
+                })
+        setClassName("normalMessage")
+        setMessage(`Added ${newName}`)
+        setTimeout(() => {
+            setMessage(null)
+        }, 5000)
+
 
         } else {
             let result = window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)
