@@ -37,64 +37,90 @@ describe('when there is initially some blogs saved', () => {
         expect(response.body[0].id).toBeDefined()
     })
 
-    test('New blog is added', async () => {
-        const oldResponse = await api.get('/api/blogs')
+    describe('addition of a new blog', () => {
+        test('New blog is added', async () => {
+            const oldResponse = await api.get('/api/blogs')
 
-        const newBlog = {
-            _id: "5b422bb71b54b676234d17f8",
-            title: "Yle",
-            author: "Markus",
-            url: "http://www.yle.fi",
-            likes: 11,
-            __v: 0
-        }
+            const newBlog = {
+                _id: "5b422bb71b54b676234d17f8",
+                title: "Yle",
+                author: "Markus",
+                url: "http://www.yle.fi",
+                likes: 11,
+                __v: 0
+            }
 
-        await api
-            .post('/api/blogs')
-            .send(newBlog)
-            .expect(201)
-            .expect('Content-Type', /application\/json/)
+            await api
+                .post('/api/blogs')
+                .send(newBlog)
+                .expect(201)
+                .expect('Content-Type', /application\/json/)
 
-        const response = await api.get('/api/blogs')
-        expect(response.body.length).toBe(oldResponse.body.length+1)
+            const response = await api.get('/api/blogs')
+            expect(response.body.length).toBe(oldResponse.body.length + 1)
 
+        })
+
+        test('If likes is not defined, it is setted to zero', async () => {
+            const newBlog = {
+                _id: "5b422bb71b54b676234d17f8",
+                title: "Yle",
+                author: "Markus",
+                url: "http://www.yle.fi",
+                __v: 0
+            }
+
+            await api
+                .post('/api/blogs')
+                .send(newBlog)
+                .expect(201)
+                .expect('Content-Type', /application\/json/)
+
+            const response = await api.get('/api/blogs')
+            expect(response.body[6].likes).toBe(0)
+
+        })
+
+        test('If fields url and title is not defined, return status 400 Bad request', async () => {
+            const newBlog = {
+                _id: "5b422bb71b54b676234d17f8",
+                author: "Markus",
+                likes: 11,
+                __v: 0
+            }
+
+            await api
+                .post('/api/blogs')
+                .send(newBlog)
+                .expect(400)
+
+        })
+        describe('deletion of a new blog', () => {
+            test('succeeds with status code 204 if id is valid', async () => {
+                const blogsAtStart = await helper.blogsInDb()
+                const blogToDelete = blogsAtStart[0]
+
+                await api
+                    .delete(`/api/blogs/${blogToDelete.id}`)
+                    .expect(204)
+
+                const blogsAtEnd = await helper.blogsInDb()
+
+                expect(blogsAtEnd.length).toBe(
+                    helper.initialBlogs.length - 1
+                )
+
+                const contents = blogsAtEnd.map(r => r.title)
+
+                expect(contents).not.toContain(blogToDelete.title)
+            })
+        })
+        
     })
-    
-    test('If likes is not defined, it is setted to zero', async () => {
-        const newBlog = {
-            _id: "5b422bb71b54b676234d17f8",
-            title: "Yle",
-            author: "Markus",
-            url: "http://www.yle.fi",
-            __v: 0
-        }
 
-        await api
-            .post('/api/blogs')
-            .send(newBlog)
-            .expect(201)
-            .expect('Content-Type', /application\/json/)
-
-        const response = await api.get('/api/blogs')
-        expect(response.body[6].likes).toBe(0)
-
-    })
-    
-    test('If fields url and title is not defined, return status 400 Bad request', async () => {
-        const newBlog = {
-            _id: "5b422bb71b54b676234d17f8",
-            author: "Markus",
-            likes: 11,
-            __v: 0
-        }
-
-        await api
-            .post('/api/blogs')
-            .send(newBlog)
-            .expect(400)
-
-    })
 })
+
+
 
 afterAll(() => {
     mongoose.connection.close()
