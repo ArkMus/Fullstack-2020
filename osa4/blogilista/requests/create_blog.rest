@@ -1,9 +1,10 @@
-POST http://localhost:3003/api/blogs 
+POST http://localhost:3003/api/blogs
 Content-Type: application/json
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IkFya211cyIsImlkIjoiNWU0ODIwODUzNWVhODk3YWNhZTJmNDM1IiwiaWF0IjoxNTgxNzg5MDIwfQ.RN725A3RKHt75rXU1pKQlgzXrC2hpGng0m5DO3ohZZw
 
 {
     "title": "News",
     "author": "Markus",
-    "url" : "https://www.yle.fi",
+    "url" : "https://www.hs.fi",
     "likes": 1
 }
