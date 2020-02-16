@@ -1,5 +1,6 @@
 
 const supertest = require('supertest')
+const jwt = require('jsonwebtoken')
 const mongoose = require('mongoose')
 const helper = require('./test_helper')
 const app = require('../app')
@@ -53,6 +54,7 @@ describe('when there is initially some blogs saved', () => {
 
             await api
                 .post('/api/blogs')
+                .set("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IkFya211cyIsImlkIjoiNWU0ODIwODUzNWVhODk3YWNhZTJmNDM1IiwiaWF0IjoxNTgxODY2MzgxfQ.xwcVBWlfLDCjHbPRrgMBGwbuWcmdehLKMqoKfDeSk8Q")
                 .send(newBlog)
                 .expect(201)
                 .expect('Content-Type', /application\/json/)
