@@ -4,6 +4,8 @@ import blogService from './services/blogs'
 import loginService from './services/login'
 import Notification from './components/Notification'
 import BlogForm from './components/BlogForm'
+import Togglable from './components/Togglable'
+
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -15,10 +17,17 @@ const App = () => {
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
 
-  useEffect(() => {
+
+  const blogFormRef = React.createRef()
+
+  const updateBlogList = () => {
     blogService.getAll().then(blogs =>
       setBlogs(blogs)
     )
+  }
+
+  useEffect(() => {
+    updateBlogList()
   }, [])
 
   useEffect(() => {
@@ -31,6 +40,7 @@ const App = () => {
   }, [])
 
   const addBlog = (event) => {
+    blogFormRef.current.toggleVisibility()
     event.preventDefault()
     const blogObject = {
       title: newTitle,
@@ -59,7 +69,7 @@ const App = () => {
     <form onSubmit={handleLogin}>
       <div>
         username
-          <input
+        <input
           type="text"
           value={username}
           name="Username"
@@ -68,7 +78,7 @@ const App = () => {
       </div>
       <div>
         password
-          <input
+        <input
           type="password"
           value={password}
           name="Password"
@@ -77,6 +87,13 @@ const App = () => {
       </div>
       <button type="submit">login</button>
     </form>
+  )
+
+  const blogForm = () => (
+    <Togglable buttonLabel='create' ref={blogFormRef}>
+      <BlogForm addBlog={addBlog} newAuthor={newAuthor} newTitle={newTitle} newUrl={newUrl} handleAuthorChange={handleAuthorChange}
+        handleTitleChange={handleTitleChange} handleUrlChange={handleUrlChange} />
+    </Togglable>
   )
 
   const handleTitleChange = (event) => {
@@ -117,8 +134,21 @@ const App = () => {
     }
   }
 
-  const handleLogout = async (event) => {
+  const handleLogout = async () => {
     window.localStorage.removeItem('loggedBlogappUser')
+  }
+
+  const handleLike = async (blog) => {
+    blog.likes += 1
+    await blogService.update(blog.id, blog)
+    updateBlogList()
+  }
+
+  const handleRemove = async (blog) => {
+    if (window.confirm(`Remove blog ${blog.title} by ${blog.author} ?`)) {
+      await blogService.remove(blog.id)
+      updateBlogList()
+    }
   }
 
   const logoutForm = () => (
@@ -145,12 +175,10 @@ const App = () => {
         <div>
           {user.name} logged in {logoutForm()}
         </div>
-        <BlogForm addBlog={addBlog} newAuthor={newAuthor} newTitle={newTitle} newUrl={newUrl} handleAuthorChange={handleAuthorChange}
-          handleTitleChange={handleTitleChange} handleUrlChange={handleUrlChange} />
+        {blogForm()}
       </div>
-      {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
-      )}
+      {blogs.sort((a, b) => b.likes - a.likes).map(blog =>
+        <Blog key={blog.id} blog={blog} handleLike={() => handleLike(blog)} handleRemove={() => handleRemove(blog)} user={user} />)}
     </div>
   )
 }
