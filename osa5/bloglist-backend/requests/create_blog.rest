@@ -1,0 +1,10 @@
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IkFya211cyIsImlkIjoiNWU0ODIwODUzNWVhODk3YWNhZTJmNDM1IiwiaWF0IjoxNTgxODY2MzgxfQ.xwcVBWlfLDCjHbPRrgMBGwbuWcmdehLKMqoKfDeSk8Q
+
+{
+    "title": "News",
+    "author": "Markus",
+    "url" : "https://www.hs.fi",
+    "likes": 1
+}
