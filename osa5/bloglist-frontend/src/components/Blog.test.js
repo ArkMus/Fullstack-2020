@@ -12,40 +12,70 @@ test('renders Title and Author', () => {
         url: "url",
         likes: 0,
         user: "123"
-      }
+    }
 
-  const component = render(
-    <Blog blog={blog} />
-  )
+    const component = render(
+        <Blog blog={blog} />
+    )
 
-  expect(component.container).toHaveTextContent(
-    'Title', 'Author'
-  )
+    expect(component.container).toHaveTextContent(
+        'Title', 'Author'
+    )
 })
 
 test('clicking the button shows also url and likes', async () => {
-    const mockUser = {
+    const user = {
         name: "bob"
     }
+    
     const blog = {
         title: "Title",
         author: "Author",
         url: "url",
         likes: 0,
-        user: mockUser
-      }
+        user : user
+    }
+
+    const mockHandler = jest.fn()
+
+    const component = render(
+        <Blog blog={blog} handleLike={mockHandler} handleRemove={mockHandler} user={user} />
+    )
 
 
-  const mockHandler = jest.fn()
+    const button = component.getByText('view')
+    fireEvent.click(button)
 
-  const { getByText } = render(
-    <Blog blog={blog} handleView={mockHandler} />
-  )
 
-  const button = getByText('view')
-  fireEvent.click(button)
-
-  expect(component.container).toHaveTextContent(
-    'url', 0
-  )
+    expect(component.container).toHaveTextContent(
+        'url', 0
+    )
 })
+
+test('clicking the button calls event handler twice', async () => {
+    const user = {
+        name: "bob"
+    }
+    
+    const blog = {
+        title: "Title",
+        author: "Author",
+        url: "url",
+        likes: 0,
+        user : user
+    }
+  
+    const mockHandler = jest.fn()
+  
+    const component = render(
+        <Blog blog={blog} handleLike={mockHandler} handleRemove={mockHandler} user={user} />
+    )
+  
+    const button = component.getByText('view')
+    fireEvent.click(button)
+    const button2 = component.getByText('like')
+    fireEvent.click(button2)
+    fireEvent.click(button2)
+  
+    expect(mockHandler.mock.calls.length).toBe(2)
+  })
